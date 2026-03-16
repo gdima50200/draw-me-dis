@@ -1,56 +1,155 @@
 /* =============================================
-   DRAW ME DIS! — Retro 90s Design System
+   DRAW ME DIS! — styles.css
+   Retro 90s Design System
+   =============================================
+
+   TABLE OF CONTENTS
+   1.  CSS RESET
+   2.  ROOT VARIABLES
+   3.  GLOBAL LAYOUT
+   4.  WINDOW FRAME
+   5.  TYPOGRAPHY
+   6.  CARDS
+   7.  BUTTON SYSTEM
+   8.  FORM ELEMENTS
+   9.  MICRO INTERACTIONS
+   10. FOOTER
+   11. UTILITY CLASSES
+   12. RESPONSIVE RULES
    ============================================= */
 
-/* --- Reset & Base --- */
+
+/* =============================================
+   1. CSS RESET
+   ============================================= */
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* Tiled background texture using a CSS repeating pattern */
+
+/* =============================================
+   2. ROOT VARIABLES
+   ============================================= */
+
+:root {
+  /* --- Color palette --- */
+  --color-window-bg:       #C0C0C0;   /* Classic Win95 silver */
+  --color-desktop-bg:      #008080;   /* Classic Win95 teal desktop */
+  --color-titlebar-start:  #000080;   /* Deep navy — title bar left */
+  --color-titlebar-end:    #1084D0;   /* Bright blue — title bar right */
+
+  /* Beveled border colors (raised = light top-left, dark bottom-right) */
+  --color-bevel-light:     #FFFFFF;
+  --color-bevel-dark:      #808080;
+
+  /* Button backgrounds */
+  --color-button-bg:       #C0C0C0;
+  --color-button-primary:  #FFFF00;   /* Yellow — main CTA */
+  --color-button-success:  #008000;   /* Green — save action */
+  --color-button-reset-fg: #AA0000;   /* Red text — destructive action */
+
+  /* Accent used on step cards and labels */
+  --color-accent:          #000080;
+
+  /* Text */
+  --color-text-main:       #111111;
+  --color-text-muted:      #555555;
+  --color-text-on-dark:    #FFFFFF;
+  --color-text-link:       #0000EE;
+  --color-text-visited:    #551A8B;
+  --color-text-hover:      #FF0000;
+
+  /* Card / input background */
+  --color-surface:         #FFFFFF;
+
+  /* Terminal green used in the marquee */
+  --color-terminal-green:  #00FF00;
+
+  /* --- Spacing scale --- */
+  --spacing-xs:  4px;
+  --spacing-sm:  8px;
+  --spacing-md:  14px;
+  --spacing-lg:  20px;
+  --spacing-xl:  32px;
+
+  /* --- Misc --- */
+  --radius-small: 0;   /* No border-radius — stays true to Win95 aesthetic */
+  --font-ui:      "Arial", "Helvetica", sans-serif;
+  --font-mono:    "Courier New", monospace;
+}
+
+
+/* =============================================
+   3. GLOBAL LAYOUT
+   ============================================= */
+
 body {
-  background-color: #008080; /* Classic Windows teal desktop */
-  background-image:
-    repeating-linear-gradient(
-      45deg,
-      rgba(0,0,0,0.04) 0px,
-      rgba(0,0,0,0.04) 1px,
-      transparent 1px,
-      transparent 8px
-    );
-  font-family: "Arial", "Helvetica", sans-serif;
+  background-color: var(--color-desktop-bg);
+
+  /* Subtle tiled diagonal texture over the desktop */
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.04) 0px,
+    rgba(0, 0, 0, 0.04) 1px,
+    transparent 1px,
+    transparent 8px
+  );
+
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  color: var(--color-text-main);
   min-height: 100vh;
+
+  /* Center the window card on screen */
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 16px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--spacing-md);
 }
 
-/* --- Window Chrome --- */
+/* Classic 90s link colors */
+a:link    { color: var(--color-text-link); }
+a:visited { color: var(--color-text-visited); }
+a:hover   { color: var(--color-text-hover); text-decoration: underline; }
+
+
+/* =============================================
+   4. WINDOW FRAME
+   ============================================= */
+
+/* Outer window container — raised bevel gives it the 3D "floating window" look */
 .window {
-  background: #C0C0C0;
-  border-top: 3px solid #FFFFFF;
-  border-left: 3px solid #FFFFFF;
-  border-right: 3px solid #808080;
-  border-bottom: 3px solid #808080;
+  background: var(--color-window-bg);
   width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
+  max-width: 460px;
+
+  /* Raised bevel: light on top-left, dark on bottom-right */
+  border-top:    3px solid var(--color-bevel-light);
+  border-left:   3px solid var(--color-bevel-light);
+  border-right:  3px solid var(--color-bevel-dark);
+  border-bottom: 3px solid var(--color-bevel-dark);
 }
 
-/* Title bar */
+/* Blue gradient title bar — identical to Win95 active window */
 .title-bar {
-  background: linear-gradient(to right, #000080, #1084d0);
-  color: #FFFFFF;
-  font-weight: bold;
+  background: linear-gradient(
+    to right,
+    var(--color-titlebar-start),
+    var(--color-titlebar-end)
+  );
+  color: var(--color-text-on-dark);
   font-size: 13px;
-  padding: 4px 6px;
+  font-weight: bold;
+  padding: var(--spacing-xs) var(--spacing-sm);
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  user-select: none;
+  user-select: none; /* Prevents accidental text selection while dragging */
 }
 
 .title-bar-text {
@@ -62,48 +161,266 @@ body {
   gap: 3px;
 }
 
+/* The three chrome buttons (_  □  X) in the title bar */
 .title-btn {
-  background: #C0C0C0;
-  border-top: 2px solid #FFFFFF;
-  border-left: 2px solid #FFFFFF;
-  border-right: 2px solid #808080;
-  border-bottom: 2px solid #808080;
+  background: var(--color-button-bg);
   width: 18px;
   height: 16px;
   font-size: 9px;
   cursor: pointer;
-  line-height: 1;
   padding: 0;
+  line-height: 1;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  border-top:    2px solid var(--color-bevel-light);
+  border-left:   2px solid var(--color-bevel-light);
+  border-right:  2px solid var(--color-bevel-dark);
+  border-bottom: 2px solid var(--color-bevel-dark);
 }
 
 .title-btn:active {
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #FFFFFF;
-  border-bottom: 2px solid #FFFFFF;
+  /* Invert bevel to simulate pressing inward */
+  border-top:    2px solid var(--color-bevel-dark);
+  border-left:   2px solid var(--color-bevel-dark);
+  border-right:  2px solid var(--color-bevel-light);
+  border-bottom: 2px solid var(--color-bevel-light);
 }
 
-/* Window body */
+/* Inner content area with consistent vertical spacing between sections */
 .window-body {
-  padding: 16px;
+  padding: var(--spacing-md);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--spacing-md);
 }
 
-/* --- Headings --- */
+
+/* =============================================
+   5. TYPOGRAPHY
+   ============================================= */
+
+/* Page title — large rainbow-animated heading */
 h1.rainbow-text {
   font-size: clamp(1.8rem, 8vw, 2.4rem);
   font-weight: 900;
   text-align: center;
   letter-spacing: 1px;
   text-transform: uppercase;
+  line-height: 1.1;
   animation: rainbow-shift 2.5s linear infinite;
 }
 
+/* Tagline below the title */
+.subtitle {
+  text-align: center;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+/* Scrolling announcement bar */
+.marquee-wrap {
+  background: #000000;
+  padding: var(--spacing-xs) 0;
+  overflow: hidden;
+
+  /* Inset bevel — dark on top-left, light on bottom-right */
+  border-top:    2px solid var(--color-bevel-dark);
+  border-left:   2px solid var(--color-bevel-dark);
+  border-right:  2px solid var(--color-bevel-light);
+  border-bottom: 2px solid var(--color-bevel-light);
+}
+
+.marquee {
+  color: var(--color-terminal-green);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* Body text inside idea and step cards */
+#idea-display,
+#step-display {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--color-text-main);
+}
+
+/* Small uppercase tag above step instructions */
+.step-label {
+  display: inline-block;
+  align-self: flex-start;
+  background: var(--color-accent);
+  color: var(--color-text-on-dark);
+  font-size: 0.72rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px var(--spacing-sm);
+}
+
+/* Form field label */
+.field-label {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: var(--color-text-main);
+}
+
+/* Confirmation message shown after saving a doodle name */
+.name-result {
+  font-weight: bold;
+  font-size: 1rem;
+  text-align: center;
+  color: var(--color-accent);
+  padding: var(--spacing-xs) 0;
+}
+
+
+/* =============================================
+   6. CARDS
+   ============================================= */
+
+/* Base card — white surface with inset bevel */
+.card {
+  background: var(--color-surface);
+  padding: var(--spacing-md);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+
+  /* Inset bevel makes the card look recessed into the window */
+  border-top:    2px solid var(--color-bevel-dark);
+  border-left:   2px solid var(--color-bevel-dark);
+  border-right:  2px solid var(--color-bevel-light);
+  border-bottom: 2px solid var(--color-bevel-light);
+}
+
+/* Step card has an extra accent stripe on the left edge */
+.step-card {
+  border-left: 4px solid var(--color-accent);
+}
+
+
+/* =============================================
+   7. BUTTON SYSTEM
+   ============================================= */
+
+/* --- Base button --- */
+/* All buttons share this foundation. Variants only override color. */
+.btn {
+  display: block;
+  width: 100%;
+  min-height: 48px;          /* Touch-friendly tap target */
+  padding: 10px var(--spacing-md);
+
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  text-align: center;
+  cursor: pointer;
+
+  /* Raised bevel — matches window chrome style */
+  border-top:    3px solid var(--color-bevel-light);
+  border-left:   3px solid var(--color-bevel-light);
+  border-right:  3px solid var(--color-bevel-dark);
+  border-bottom: 3px solid var(--color-bevel-dark);
+
+  /* Remove default browser outline — we define our own below */
+  outline: none;
+}
+
+/* Keyboard focus indicator — visible dotted ring */
+.btn:focus-visible {
+  outline: 2px dotted var(--color-text-main);
+  outline-offset: 2px;
+}
+
+/* Hover state — slight brightness shift to signal interactivity */
+.btn:hover {
+  filter: brightness(1.06);
+}
+
+/* Press state — invert bevel and nudge position to simulate physical click */
+.btn:active {
+  border-top:    3px solid var(--color-bevel-dark);
+  border-left:   3px solid var(--color-bevel-dark);
+  border-right:  3px solid var(--color-bevel-light);
+  border-bottom: 3px solid var(--color-bevel-light);
+  transform: translate(1px, 1px);
+}
+
+/* --- Variants --- */
+
+/* Primary: main call-to-action — bright yellow for maximum attention */
+.btn-primary {
+  background: var(--color-button-primary);
+  color: var(--color-text-main);
+  font-size: 1.1rem;
+}
+
+/* Secondary: neutral action — standard window gray */
+.btn-secondary {
+  background: var(--color-button-bg);
+  color: var(--color-text-main);
+}
+
+/* Success: confirmatory action — green signals a positive outcome */
+.btn-success {
+  background: var(--color-button-success);
+  color: var(--color-text-on-dark);
+  min-height: 44px;
+}
+
+/* Reset: low-priority destructive action — red text on gray signals caution */
+.btn-reset {
+  background: var(--color-button-bg);
+  color: var(--color-button-reset-fg);
+  font-size: 0.9rem;
+}
+
+
+/* =============================================
+   8. FORM ELEMENTS
+   ============================================= */
+
+/* Text input — inset bevel matches the card style */
+.text-input {
+  width: 100%;
+  min-height: 44px;          /* Touch-friendly tap target */
+  padding: var(--spacing-sm);
+
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--color-text-main);
+  background: var(--color-surface);
+
+  /* Inset bevel — signals this is an editable field */
+  border-top:    2px solid var(--color-bevel-dark);
+  border-left:   2px solid var(--color-bevel-dark);
+  border-right:  2px solid var(--color-bevel-light);
+  border-bottom: 2px solid var(--color-bevel-light);
+
+  outline: none;
+}
+
+/* Keyboard focus indicator on the input */
+.text-input:focus {
+  outline: 2px dotted var(--color-accent);
+  outline-offset: 1px;
+}
+
+
+/* =============================================
+   9. MICRO INTERACTIONS
+   ============================================= */
+
+/* Cycling rainbow color on the page title */
 @keyframes rainbow-shift {
   0%   { color: #FF0000; }
   16%  { color: #FF8800; }
@@ -114,222 +431,76 @@ h1.rainbow-text {
   100% { color: #FF0000; }
 }
 
-.subtitle {
-  text-align: center;
-  font-size: 0.85rem;
-  color: #444444;
-  font-style: italic;
-}
-
-/* Respect reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  h1.rainbow-text {
-    animation: none;
-    color: #000080;
-  }
-  .blink-badge {
-    animation: none !important;
-  }
-}
-
-/* --- Marquee --- */
-.marquee-wrap {
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #FFFFFF;
-  border-bottom: 2px solid #FFFFFF;
-  background: #000000;
-  padding: 4px 0;
-  overflow: hidden;
-}
-
-.marquee {
-  color: #00FF00;
-  font-family: "Courier New", monospace;
-  font-size: 0.8rem;
-  font-weight: bold;
-  letter-spacing: 1px;
-}
-
-/* --- Cards --- */
-.card {
-  background: #FFFFFF;
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #FFFFFF;
-  border-bottom: 2px solid #FFFFFF;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.step-card {
-  border-left: 4px solid #000080;
-}
-
-.step-label {
-  font-size: 0.75rem;
-  font-weight: bold;
-  color: #FFFFFF;
-  background: #000080;
-  padding: 2px 8px;
-  display: inline-block;
-  align-self: flex-start;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-#idea-display,
-#step-display {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #111111;
-}
-
-/* --- Buttons --- */
-.btn {
-  display: block;
-  width: 100%;
-  min-height: 48px;
-  font-size: 1rem;
-  font-weight: bold;
-  font-family: inherit;
-  cursor: pointer;
-  text-align: center;
-  padding: 10px 16px;
-  letter-spacing: 0.5px;
-
-  /* Beveled 3D border */
-  border-top: 3px solid #FFFFFF;
-  border-left: 3px solid #FFFFFF;
-  border-right: 3px solid #808080;
-  border-bottom: 3px solid #808080;
-
-  /* Focus ring for keyboard users */
-  outline: none;
-}
-
-.btn:focus-visible {
-  outline: 2px dotted #000000;
-  outline-offset: 2px;
-}
-
-/* Visually press down on click */
-.btn:active {
-  border-top: 3px solid #808080;
-  border-left: 3px solid #808080;
-  border-right: 3px solid #FFFFFF;
-  border-bottom: 3px solid #FFFFFF;
-  transform: translate(1px, 1px);
-}
-
-.btn-primary {
-  background: #FFFF00;
-  color: #000000;
-  font-size: 1.1rem;
-}
-
-.btn-secondary {
-  background: #C0C0C0;
-  color: #000000;
-}
-
-.btn-success {
-  background: #00AA00;
-  color: #FFFFFF;
-  min-height: 44px;
-}
-
-.btn-reset {
-  background: #C0C0C0;
-  color: #AA0000;
-  font-size: 0.9rem;
-}
-
-/* --- Form Elements --- */
-.field-label {
-  font-weight: bold;
-  font-size: 0.9rem;
-  color: #000000;
-}
-
-.text-input {
-  width: 100%;
-  min-height: 44px;
-  font-size: 1rem;
-  font-family: "Courier New", monospace;
-  padding: 8px;
-  color: #000000;
-  background: #FFFFFF;
-
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #FFFFFF;
-  border-bottom: 2px solid #FFFFFF;
-  outline: none;
-}
-
-.text-input:focus {
-  outline: 2px dotted #000080;
-  outline-offset: 1px;
-}
-
-.name-result {
-  font-weight: bold;
-  color: #000080;
-  font-size: 1rem;
-  text-align: center;
-  padding: 4px 0;
-}
-
-/* --- Links (classic 90s) --- */
-a:link    { color: #0000EE; }
-a:visited { color: #551A8B; }
-a:hover   { color: #FF0000; text-decoration: underline; }
-
-/* --- Blink Badge --- */
-.blink-badge {
-  display: inline-block;
-  background: #FF0000;
-  color: #FFFFFF;
-  font-size: 0.65rem;
-  font-weight: bold;
-  padding: 1px 4px;
-  margin-right: 6px;
-  animation: blink 1s step-start infinite;
-}
-
+/* Hard on/off blink for the footer badge */
 @keyframes blink {
   50% { opacity: 0; }
 }
 
-/* --- Footer --- */
-.footer {
-  font-size: 0.72rem;
-  color: #555555;
-  text-align: center;
-  border-top: 1px solid #808080;
-  padding-top: 10px;
+/* Respect the user's system preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  h1.rainbow-text {
+    animation: none;
+    color: var(--color-accent); /* Fallback static color */
+  }
+
+  .blink-badge {
+    animation: none;
+  }
 }
 
-/* --- Utility --- */
+
+/* =============================================
+   10. FOOTER
+   ============================================= */
+
+.footer {
+  border-top: 1px solid var(--color-bevel-dark);
+  padding-top: var(--spacing-sm);
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* Flashing red "NEW!" badge in the footer */
+.blink-badge {
+  display: inline-block;
+  background: #FF0000;
+  color: var(--color-text-on-dark);
+  font-size: 0.65rem;
+  font-weight: bold;
+  padding: 1px var(--spacing-xs);
+  margin-right: var(--spacing-sm);
+  animation: blink 1s step-start infinite;
+}
+
+
+/* =============================================
+   11. UTILITY CLASSES
+   ============================================= */
+
+/* Hides elements — used by JavaScript to show/hide sections */
 .hidden {
   display: none !important;
 }
 
-/* --- Desktop scaling --- */
+
+/* =============================================
+   12. RESPONSIVE RULES
+   ============================================= */
+
+/* Desktop breakpoint — center vertically and give the layout more breathing room */
 @media (min-width: 600px) {
   body {
-    padding: 32px 16px;
-    align-items: center;
-  }
-
-  .window {
-    margin-top: 0;
+    justify-content: center;
+    padding: var(--spacing-xl) var(--spacing-md);
   }
 
   h1.rainbow-text {
     font-size: 2.6rem;
+  }
+
+  .window-body {
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
   }
 }
