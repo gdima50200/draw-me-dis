@@ -1,506 +1,406 @@
-/* =============================================
-   DRAW ME DIS! — styles.css
-   Retro 90s Design System
-   =============================================
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
 
-   TABLE OF CONTENTS
-   1.  CSS RESET
-   2.  ROOT VARIABLES
-   3.  GLOBAL LAYOUT
-   4.  WINDOW FRAME
-   5.  TYPOGRAPHY
-   6.  CARDS
-   7.  BUTTON SYSTEM
-   8.  FORM ELEMENTS
-   9.  MICRO INTERACTIONS
-   10. FOOTER
-   11. UTILITY CLASSES
-   12. RESPONSIVE RULES
-   ============================================= */
-
-
-/* =============================================
-   1. CSS RESET
-   ============================================= */
-
+/* — Reset — */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-
-/* =============================================
-   2. ROOT VARIABLES
-   ============================================= */
-
+/* — Variables — */
 :root {
-  /* --- Color palette --- */
-  --color-window-bg:       #C0C0C0;   /* Classic Win95 silver */
-  --color-desktop-bg:      #008080;   /* Classic Win95 teal desktop */
-  --color-titlebar-start:  #000080;   /* Deep navy — title bar left */
-  --color-titlebar-end:    #1084D0;   /* Bright blue — title bar right */
-
-  /* Beveled border colors (raised = light top-left, dark bottom-right) */
-  --color-bevel-light:     #FFFFFF;
-  --color-bevel-dark:      #808080;
-
-  /* Button backgrounds */
-  --color-button-bg:       #C0C0C0;
-  --color-button-primary:  #FFFF00;   /* Yellow — main CTA */
-  --color-button-success:  #008000;   /* Green — save action */
-  --color-button-reset-fg: #AA0000;   /* Red text — destructive action */
-
-  /* Accent used on step cards and labels */
-  --color-accent:          #000080;
-
-  /* Text */
-  --color-text-main:       #111111;
-  --color-text-muted:      #555555;
-  --color-text-on-dark:    #FFFFFF;
-  --color-text-link:       #0000EE;
-  --color-text-visited:    #551A8B;
-  --color-text-hover:      #FF0000;
-
-  /* Card / input background */
-  --color-surface:         #FFFFFF;
-
-  /* Terminal green used in the marquee */
-  --color-terminal-green:  #00FF00;
-
-  /* --- Spacing scale --- */
-  --spacing-xs:  4px;
-  --spacing-sm:  8px;
-  --spacing-md:  14px;
-  --spacing-lg:  20px;
-  --spacing-xl:  32px;
-
-  /* --- Misc --- */
-  --radius-small: 0;   /* No border-radius — stays true to Win95 aesthetic */
-  --font-ui:      "Arial", "Helvetica", sans-serif;
-  --font-mono:    "Courier New", monospace;
+  --note-yellow-dark: #f5d800;
+  --note-shadow: rgba(0,0,0,0.35);
+  --text-dark: #2d2d2d;
+  --text-mid: #555;
+  --text-soft: #777;
+  --accent: #f97316;
+  --accent2: #a78bfa;
 }
 
+/* — Background: starry night — */
+html, body {
+  min-height: 100%;
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+  background-attachment: fixed;
+  font-family: 'Nunito', system-ui, sans-serif;
+  color: var(--text-dark);
+  overflow-x: hidden;
+}
 
-/* =============================================
-   3. GLOBAL LAYOUT
-   ============================================= */
+/* — Star field — */
+#starField {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
 
-body {
-  background-color: var(--color-desktop-bg);
+.star {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 50%;
+  opacity: 0.55;
+}
 
-  /* Subtle tiled diagonal texture over the desktop */
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(0, 0, 0, 0.04) 0px,
-    rgba(0, 0, 0, 0.04) 1px,
-    transparent 1px,
-    transparent 8px
-  );
+.star.twinkle {
+  animation: twinkle var(--twinkle-dur, 3s) ease-in-out infinite;
+  animation-delay: var(--twinkle-delay, 0s);
+}
 
-  font-family: var(--font-ui);
-  font-size: 1rem;
-  color: var(--color-text-main);
+@keyframes twinkle {
+  0%, 100% { opacity: 0.55; }
+  50%       { opacity: 0.1;  }
+}
+
+/* — Page layout — */
+.page {
+  position: relative;
+  z-index: 1;
   min-height: 100vh;
-
-  /* Center the window card on screen */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  padding: var(--spacing-md);
+  padding: 36px 16px 48px;
 }
 
-/* Classic 90s link colors */
-a:link    { color: var(--color-text-link); }
-a:visited { color: var(--color-text-visited); }
-a:hover   { color: var(--color-text-hover); text-decoration: underline; }
-
-
-/* =============================================
-   4. WINDOW FRAME
-   ============================================= */
-
-/* Outer window container — raised bevel gives it the 3D "floating window" look */
-.window {
-  background: var(--color-window-bg);
-  width: 100%;
-  max-width: 460px;
-
-  /* Raised bevel: light on top-left, dark on bottom-right */
-  border-top:    3px solid var(--color-bevel-light);
-  border-left:   3px solid var(--color-bevel-light);
-  border-right:  3px solid var(--color-bevel-dark);
-  border-bottom: 3px solid var(--color-bevel-dark);
-}
-
-/* Blue gradient title bar — identical to Win95 active window */
-.title-bar {
-  background: linear-gradient(
-    to right,
-    var(--color-titlebar-start),
-    var(--color-titlebar-end)
-  );
-  color: var(--color-text-on-dark);
-  font-size: 13px;
-  font-weight: bold;
-  padding: var(--spacing-xs) var(--spacing-sm);
-
+/* — Header — */
+.header-area {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  user-select: none; /* Prevents accidental text selection while dragging */
+  gap: 8px;
+  margin-bottom: 32px;
+  user-select: none;
 }
 
-.title-bar-text {
-  letter-spacing: 0.5px;
+.app-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #e2e8f0;
 }
 
-.title-bar-buttons {
+.sparkle {
+  font-size: 1rem;
+  color: var(--accent2);
+  animation: pulse-sparkle 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse-sparkle {
+  0%, 100% { opacity: 1;   transform: scale(1);   }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+/* — Note wrapper — */
+.note-wrapper {
+  width: 100%;
+  max-width: 400px;
   display: flex;
-  gap: 3px;
+  justify-content: center;
+  margin-left: 6px;
 }
 
-/* The three chrome buttons (_  □  X) in the title bar */
-.title-btn {
-  background: var(--color-button-bg);
-  width: 18px;
-  height: 16px;
-  font-size: 9px;
-  cursor: pointer;
-  padding: 0;
+/* — Sticky note — */
+.sticky-note {
+  width: 100%;
+  background: linear-gradient(
+    160deg,
+    #fffde0 0%,
+    #fff6a0 40%,
+    #fef08a 100%
+  );
+  border-radius: 4px 18px 18px 4px;
+  box-shadow:
+    2px 3px 0px var(--note-yellow-dark),
+    4px 10px 32px var(--note-shadow),
+    0 1px 2px rgba(0,0,0,0.12);
+  padding: 22px 24px 28px;
+  position: relative;
+  transform: rotate(-1.2deg);
+  transform-origin: top left;
+}
+
+/* tape strip */
+.sticky-note::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%) rotate(1deg);
+  width: 52px;
+  height: 14px;
+  background: rgba(253,224,71,0.55);
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* crumple out */
+.sticky-note.crumple-out {
+  animation: crumpleOut 0.38s cubic-bezier(0.4,0,1,1) forwards;
+}
+
+@keyframes crumpleOut {
+  0%   { transform: rotate(-1.2deg)                    scale(1, 1);        opacity: 1;   }
+  35%  { transform: rotate(var(--crumple-mid, 3deg))   scale(0.97, 0.95);  opacity: 0.85; }
+  100% { transform: rotate(var(--crumple-end, -7deg))  scale(0.86, 0.80);  opacity: 0;   }
+}
+
+/* pop in */
+.sticky-note.pop-in {
+  animation: popIn 0.42s cubic-bezier(0.22,1.5,0.5,1) forwards;
+}
+
+@keyframes popIn {
+  0%   { transform: rotate(var(--popin-start, -3deg)) scale(0.82); opacity: 0; }
+  68%  { transform: rotate(-0.6deg)                   scale(1.03); opacity: 1; }
+  100% { transform: rotate(-1.2deg)                   scale(1);    opacity: 1; }
+}
+
+/* — Progress bar — */
+.progress-bar-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(0,0,0,0.1);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #f97316, #a78bfa);
+  border-radius: 99px;
+  transition: width 0.48s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* — Note content — */
+.note-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.intro-icon {
+  font-size: 2.4rem;
   line-height: 1;
+  text-align: center;
+  margin-bottom: 2px;
+}
 
+.note-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.note-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text-dark);
+  text-align: center;
+}
+
+.note-desc {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-mid);
+  line-height: 1.55;
+  text-align: center;
+}
+
+.note-tagline {
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  font-weight: 600;
+  font-style: italic;
+  text-align: center;
+}
+
+/* — Step display — */
+.step-number {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  text-align: left;
+}
+
+.step-text {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.55;
+  text-align: left;
+}
+
+.step-text.reveal {
+  animation: stepReveal 0.35s ease-in-out forwards;
+}
+
+@keyframes stepReveal {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* — Steps history — */
+.steps-history {
   display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.step-past {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(0,0,0,0.35);
+  padding: 4px 0;
+  border-bottom: 1px dashed rgba(0,0,0,0.1);
+  line-height: 1.4;
+  text-align: left;
+}
+
+/* — Done message — */
+.done-message {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-mid);
+  text-align: center;
+  padding: 4px 0;
+}
+
+/* — Buttons — */
+.btn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  border-top:    2px solid var(--color-bevel-light);
-  border-left:   2px solid var(--color-bevel-light);
-  border-right:  2px solid var(--color-bevel-dark);
-  border-bottom: 2px solid var(--color-bevel-dark);
-}
-
-.title-btn:active {
-  /* Invert bevel to simulate pressing inward */
-  border-top:    2px solid var(--color-bevel-dark);
-  border-left:   2px solid var(--color-bevel-dark);
-  border-right:  2px solid var(--color-bevel-light);
-  border-bottom: 2px solid var(--color-bevel-light);
-}
-
-/* Inner content area with consistent vertical spacing between sections */
-.window-body {
-  padding: var(--spacing-md);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-
-/* =============================================
-   5. TYPOGRAPHY
-   ============================================= */
-
-/* Page title — large rainbow-animated heading */
-h1.rainbow-text {
-  font-size: clamp(1.8rem, 8vw, 2.4rem);
-  font-weight: 900;
-  text-align: center;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  line-height: 1.1;
-  animation: rainbow-shift 2.5s linear infinite;
-}
-
-/* Tagline below the title */
-.subtitle {
-  text-align: center;
-  font-size: 0.85rem;
-  font-style: italic;
-  color: var(--color-text-muted);
-}
-
-/* Scrolling announcement bar */
-.marquee-wrap {
-  background: #000000;
-  padding: var(--spacing-xs) 0;
-  overflow: hidden;
-
-  /* Inset bevel — dark on top-left, light on bottom-right */
-  border-top:    2px solid var(--color-bevel-dark);
-  border-left:   2px solid var(--color-bevel-dark);
-  border-right:  2px solid var(--color-bevel-light);
-  border-bottom: 2px solid var(--color-bevel-light);
-}
-
-.marquee {
-  color: var(--color-terminal-green);
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  font-weight: bold;
-  letter-spacing: 1px;
-}
-
-/* Body text inside idea and step cards */
-#idea-display,
-#step-display {
-  font-size: 1rem;
-  line-height: 1.65;
-  color: var(--color-text-main);
-}
-
-/* Small uppercase tag above step instructions */
-.step-label {
-  display: inline-block;
-  align-self: flex-start;
-  background: var(--color-accent);
-  color: var(--color-text-on-dark);
-  font-size: 0.72rem;
-  font-weight: bold;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 2px var(--spacing-sm);
-}
-
-/* Form field label */
-.field-label {
-  font-weight: bold;
-  font-size: 0.9rem;
-  color: var(--color-text-main);
-}
-
-/* Confirmation message shown after saving a doodle name */
-.name-result {
-  font-weight: bold;
-  font-size: 1rem;
-  text-align: center;
-  color: var(--color-accent);
-  padding: var(--spacing-xs) 0;
-}
-
-
-/* =============================================
-   6. CARDS
-   ============================================= */
-
-/* Base card — white surface with inset bevel */
-.card {
-  background: var(--color-surface);
-  padding: var(--spacing-md);
-
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-
-  /* Inset bevel makes the card look recessed into the window */
-  border-top:    2px solid var(--color-bevel-dark);
-  border-left:   2px solid var(--color-bevel-dark);
-  border-right:  2px solid var(--color-bevel-light);
-  border-bottom: 2px solid var(--color-bevel-light);
-}
-
-/* Step card has an extra accent stripe on the left edge */
-.step-card {
-  border-left: 4px solid var(--color-accent);
-}
-
-
-/* =============================================
-   7. BUTTON SYSTEM
-   ============================================= */
-
-/* --- Base button --- */
-/* All buttons share this foundation. Variants only override color. */
-.btn {
-  display: block;
-  width: 100%;
-  min-height: 48px;          /* Touch-friendly tap target */
-  padding: 10px var(--spacing-md);
-
-  font-family: var(--font-ui);
-  font-size: 1rem;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  text-align: center;
+  gap: 6px;
+  padding: 14px 22px;
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 0.95rem;
   cursor: pointer;
-
-  /* Raised bevel — matches window chrome style */
-  border-top:    3px solid var(--color-bevel-light);
-  border-left:   3px solid var(--color-bevel-light);
-  border-right:  3px solid var(--color-bevel-dark);
-  border-bottom: 3px solid var(--color-bevel-dark);
-
-  /* Remove default browser outline — we define our own below */
-  outline: none;
-}
-
-/* Keyboard focus indicator — visible dotted ring */
-.btn:focus-visible {
-  outline: 2px dotted var(--color-text-main);
-  outline-offset: 2px;
-}
-
-/* Hover state — slight brightness shift to signal interactivity */
-.btn:hover {
-  filter: brightness(1.06);
-}
-
-/* Press state — invert bevel and nudge position to simulate physical click */
-.btn:active {
-  border-top:    3px solid var(--color-bevel-dark);
-  border-left:   3px solid var(--color-bevel-dark);
-  border-right:  3px solid var(--color-bevel-light);
-  border-bottom: 3px solid var(--color-bevel-light);
-  transform: translate(1px, 1px);
-}
-
-/* --- Variants --- */
-
-/* Primary: main call-to-action — bright yellow for maximum attention */
-.btn-primary {
-  background: var(--color-button-primary);
-  color: var(--color-text-main);
-  font-size: 1.1rem;
-}
-
-/* Secondary: neutral action — standard window gray */
-.btn-secondary {
-  background: var(--color-button-bg);
-  color: var(--color-text-main);
-}
-
-/* Success: confirmatory action — green signals a positive outcome */
-.btn-success {
-  background: var(--color-button-success);
-  color: var(--color-text-on-dark);
-  min-height: 44px;
-}
-
-/* Reset: low-priority destructive action — red text on gray signals caution */
-.btn-reset {
-  background: var(--color-button-bg);
-  color: var(--color-button-reset-fg);
-  font-size: 0.9rem;
-}
-
-
-/* =============================================
-   8. FORM ELEMENTS
-   ============================================= */
-
-/* Text input — inset bevel matches the card style */
-.text-input {
+  transition:
+    transform 0.18s ease-in-out,
+    box-shadow 0.18s ease-in-out,
+    opacity 0.18s ease-in-out;
+  -webkit-tap-highlight-color: transparent;
   width: 100%;
-  min-height: 44px;          /* Touch-friendly tap target */
-  padding: var(--spacing-sm);
-
-  font-family: var(--font-mono);
-  font-size: 1rem;
-  color: var(--color-text-main);
-  background: var(--color-surface);
-
-  /* Inset bevel — signals this is an editable field */
-  border-top:    2px solid var(--color-bevel-dark);
-  border-left:   2px solid var(--color-bevel-dark);
-  border-right:  2px solid var(--color-bevel-light);
-  border-bottom: 2px solid var(--color-bevel-light);
-
-  outline: none;
 }
 
-/* Keyboard focus indicator on the input */
-.text-input:focus {
-  outline: 2px dotted var(--color-accent);
-  outline-offset: 1px;
+.btn:active {
+  transform: scale(0.95) !important;
+  opacity: 0.88;
 }
 
-
-/* =============================================
-   9. MICRO INTERACTIONS
-   ============================================= */
-
-/* Cycling rainbow color on the page title */
-@keyframes rainbow-shift {
-  0%   { color: #FF0000; }
-  16%  { color: #FF8800; }
-  33%  { color: #DDDD00; }
-  50%  { color: #00AA00; }
-  66%  { color: #0000FF; }
-  83%  { color: #8800AA; }
-  100% { color: #FF0000; }
+.btn-generate {
+  background: var(--text-dark);
+  color: #fff;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.28);
 }
 
-/* Hard on/off blink for the footer badge */
-@keyframes blink {
-  50% { opacity: 0; }
+.btn-generate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 rgba(0,0,0,0.22);
 }
 
-/* Respect the user's system preference for reduced motion */
+.btn-next {
+  background: #fff;
+  color: var(--text-dark);
+  box-shadow: 0 3px 0 rgba(0,0,0,0.12);
+  border: 2px solid rgba(0,0,0,0.08);
+}
+
+.btn-next:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+}
+
+.btn-pic {
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  color: #fff;
+  box-shadow: 0 3px 0 #c2410c;
+}
+
+.btn-pic:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #c2410c;
+}
+
+.btn-small {
+  width: auto;
+  padding: 10px 18px;
+  font-size: 0.82rem;
+  background: transparent;
+  color: var(--text-soft);
+  box-shadow: none;
+  border: 1.5px dashed rgba(0,0,0,0.18);
+  border-radius: 10px;
+}
+
+.btn-small:hover {
+  background: rgba(0,0,0,0.04);
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-row .btn {
+  width: 100%;
+}
+
+.btn-row-inline {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-row-inline .btn-next {
+  flex: 1;
+}
+
+/* — Divider — */
+.note-divider {
+  height: 1px;
+  background: rgba(0,0,0,0.09);
+  border-radius: 99px;
+}
+
+/* — Deco bottom — */
+.deco-bottom {
+  margin-top: 40px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: rgba(255,255,255,0.2);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  user-select: none;
+}
+
+/* — Reduced motion — */
 @media (prefers-reduced-motion: reduce) {
-  h1.rainbow-text {
-    animation: none;
-    color: var(--color-accent); /* Fallback static color */
-  }
-
-  .blink-badge {
+  .star.twinkle,
+  .sparkle {
     animation: none;
   }
-}
-
-
-/* =============================================
-   10. FOOTER
-   ============================================= */
-
-.footer {
-  border-top: 1px solid var(--color-bevel-dark);
-  padding-top: var(--spacing-sm);
-  font-size: 0.72rem;
-  color: var(--color-text-muted);
-  text-align: center;
-}
-
-/* Flashing red "NEW!" badge in the footer */
-.blink-badge {
-  display: inline-block;
-  background: #FF0000;
-  color: var(--color-text-on-dark);
-  font-size: 0.65rem;
-  font-weight: bold;
-  padding: 1px var(--spacing-xs);
-  margin-right: var(--spacing-sm);
-  animation: blink 1s step-start infinite;
-}
-
-
-/* =============================================
-   11. UTILITY CLASSES
-   ============================================= */
-
-/* Hides elements — used by JavaScript to show/hide sections */
-.hidden {
-  display: none !important;
-}
-
-
-/* =============================================
-   12. RESPONSIVE RULES
-   ============================================= */
-
-/* Desktop breakpoint — center vertically and give the layout more breathing room */
-@media (min-width: 600px) {
-  body {
-    justify-content: center;
-    padding: var(--spacing-xl) var(--spacing-md);
-  }
-
-  h1.rainbow-text {
-    font-size: 2.6rem;
-  }
-
-  .window-body {
-    gap: var(--spacing-lg);
-    padding: var(--spacing-lg);
+  .sticky-note.crumple-out,
+  .sticky-note.pop-in,
+  .step-text.reveal {
+    animation: none;
   }
 }

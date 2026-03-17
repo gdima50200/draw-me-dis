@@ -2,133 +2,279 @@
 // DRAW ME DIS! — script.js
 // =============================================
 
-// --- DATA ---
 
-const animals = [
-  "mouse", "frog", "duck", "bunny", "hedgehog",
-  "turtle", "penguin", "fox", "owl", "cat",
-  "snail", "bear cub", "axolotl", "capybara"
-];
+// — Star field —
 
-const objects = [
-  "teacup", "mushroom", "flower pot", "donut", "lantern",
-  "watering can", "umbrella", "ice cream cone", "treasure chest",
-  "tiny boat", "stack of books", "birdhouse"
-];
+function createStars() {
+  var container = document.getElementById('starField');
+  var count = 90;
 
-const patterns = [
-  "spirals", "polka dots", "waves", "checkerboard",
-  "bubbles", "zigzags", "stars", "crosshatching",
-  "fish scales", "tiny hearts", "honeycomb"
-];
+  for (var i = 0; i < count; i++) {
+    var star = document.createElement('div');
+    star.className = 'star';
 
-// --- STATE ---
+    star.style.left = (Math.random() * 100) + '%';
+    star.style.top  = (Math.random() * 100) + '%';
 
-let currentAnimal = "";
-let currentObject = "";
-let currentPattern = "";
-let currentSteps = [];
-let currentStepIndex = 0;
+    var size = Math.random() < 0.65 ? 1 : 2;
+    star.style.width  = size + 'px';
+    star.style.height = size + 'px';
 
-// --- FUNCTIONS ---
+    if (Math.random() < 0.33) {
+      star.classList.add('twinkle');
+      star.style.setProperty('--twinkle-dur',   (2.5 + Math.random() * 3.5) + 's');
+      star.style.setProperty('--twinkle-delay', (Math.random() * 5) + 's');
+    }
 
-function randomItem(array) {
-  return array[Math.floor(Math.random() * array.length)];
+    container.appendChild(star);
+  }
 }
 
-function generateIdea() {
-  currentAnimal  = randomItem(animals);
-  currentObject  = randomItem(objects);
-  currentPattern = randomItem(patterns);
+createStars();
 
-  currentSteps = generateSteps(currentAnimal, currentObject, currentPattern);
-  currentStepIndex = 0;
 
-  // Show the idea
-  const ideaDisplay = document.getElementById("idea-display");
-  ideaDisplay.textContent =
-    `Your doodle: a ${currentAnimal} with a ${currentObject}, ` +
-    `decorated with ${currentPattern}!`;
+// — Doodle data —
 
-  // Reveal first step
-  showStep(0);
+var doodles = [
+  {
+    title: "A Sleepy Cloud",
+    desc: "Soft and fluffy, this little cloud is ready for a nap.",
+    steps: [
+      "Draw a big oval in the middle — that's the cloud's tummy.",
+      "Add two smaller ovals on top, overlapping the big one.",
+      "Put a tiny oval on the far left and right sides.",
+      "Give it two little closed eyes — just curved lines.",
+      "Add tiny 'zzz' floating above it. Done!",
+    ],
+  },
+  {
+    title: "A Shy Cactus",
+    desc: "Round, a little poky, but very sweet at heart.",
+    steps: [
+      "Draw a tall rounded rectangle for the body.",
+      "Add a small arm curving out from the left side.",
+      "Add another arm curving out from the right, a bit higher.",
+      "Draw tiny lines along the body and arms — those are spines!",
+      "Add a small pink flower on top. Just a blob with petals.",
+      "Give it two tiny eyes and a little smile.",
+    ],
+  },
+  {
+    title: "A Happy Snail",
+    desc: "Slow, curly, and full of joy.",
+    steps: [
+      "Draw a big circle — that'll be the snail's shell.",
+      "Inside it, draw a spiral starting from the center.",
+      "Attach a little teardrop body coming out the bottom right.",
+      "Add a small round head at the front of the body.",
+      "Draw two long antennae on top with tiny circles at the tips.",
+      "Give it a big goofy smile and dot eyes.",
+    ],
+  },
+  {
+    title: "A Tiny Mushroom",
+    desc: "Round cap, polka dots, very magical.",
+    steps: [
+      "Draw a rounded dome shape — the cap.",
+      "Add a short wide stem underneath it.",
+      "Draw a wavy line across where cap meets stem.",
+      "Add 3-4 small circles on the cap for spots.",
+      "Put two tiny eyes and a smile on the stem.",
+    ],
+  },
+  {
+    title: "A Cozy Mug",
+    desc: "Warm, steam rising, completely content.",
+    steps: [
+      "Draw a rounded rectangle — slightly wider at the top.",
+      "Add a C-shaped handle on the right side.",
+      "Draw a wavy line near the top for the liquid level.",
+      "Add two wiggly lines rising from the top for steam.",
+      "Give the mug a tiny face — sleepy eyes and a smile.",
+    ],
+  },
+  {
+    title: "A Wobbly Star",
+    desc: "Not perfectly pointed — and that's what makes it great.",
+    steps: [
+      "Draw a triangle pointing up.",
+      "Draw another triangle pointing down, overlapping the first.",
+      "Round out the star points a little — make them slightly wobbly.",
+      "Add a cute round face in the center.",
+      "Draw tiny sparkle lines around it — short dashes radiating out.",
+    ],
+  },
+  {
+    title: "A Chubby Bird",
+    desc: "Round body, tiny wings, big personality.",
+    steps: [
+      "Draw a big circle for the body.",
+      "Add a smaller circle on top for the head.",
+      "Draw a tiny triangle beak on the side of the head.",
+      "Add two small ovals on the sides for wings.",
+      "Give it stick legs with little forked feet.",
+      "Add big round eyes with tiny shine dots.",
+    ],
+  },
+  {
+    title: "A Little House",
+    desc: "Simple and warm, with a chimney and everything.",
+    steps: [
+      "Draw a square for the main walls.",
+      "Add a triangle on top for the roof.",
+      "Draw a small rectangle chimney poking up from the roof.",
+      "Add a tiny square window on each side.",
+      "Draw a door in the center — slightly rounded at the top.",
+    ],
+  },
+];
 
-  // Show steps section, hide name/reset from previous round
-  document.getElementById("steps-section").classList.remove("hidden");
-  document.getElementById("name-section").classList.add("hidden");
-  document.getElementById("reset-btn").classList.add("hidden");
-  document.getElementById("name-result").classList.add("hidden");
-  document.getElementById("doodle-name").value = "";
 
-  // Make sure next button is visible
-  document.getElementById("next-btn").classList.remove("hidden");
+// — State —
+
+var currentDoodle = null;
+var currentStep   = 0;
+var shownSteps    = [];
+
+var note         = document.getElementById('stickyNote');
+var noteContent  = document.getElementById('noteContent');
+var progressFill = document.getElementById('progressFill');
+
+
+// — Helpers —
+
+function setProgress(pct) {
+  progressFill.style.width = pct + '%';
 }
 
-function generateSteps(animal, object, pattern) {
-  return [
-    `Draw a simple outline shape in the center of your page to form the body of a ${animal}. Keep it small — fist-sized is perfect.`,
-    `Add the details that make it clearly a ${animal}: think about its most recognizable features like ears, a beak, fins, or spines.`,
-    `Draw a ${object} next to or underneath your ${animal}. It can be leaning, floating, or held in a tiny paw.`,
-    `Connect your ${animal} and the ${object} with a fun little interaction. Maybe the ${animal} is peeking over it, sitting on it, or hugging it.`,
-    `Add tiny details: eyes, texture, little patterns on the ${object}. Make it feel alive!`,
-    `Now fill the background with ${pattern}. Cover empty space bit by bit — no rush.`,
-    `That's it! Your doodle is complete. Give it a name below. ✨`
-  ];
+
+// — Render functions —
+
+function renderIntro() {
+  setProgress(0);
+  noteContent.innerHTML = ''
+    + '<div class="intro-icon">&#x270F;&#xFE0F;</div>'
+    + '<div class="note-title">hey there!<br>let\'s doodle.</div>'
+    + '<div class="note-desc">I\'ll give you a cute little drawing idea and walk you through it step by step. No skill needed — just a pen and a smile.</div>'
+    + '<div class="note-tagline">&#x2726; one shape at a time &#x2726;</div>'
+    + '<div class="note-divider"></div>'
+    + '<div class="btn-row">'
+    +   '<button class="btn btn-generate" id="generateBtn">&#x270F;&#xFE0F; Generate Doodle</button>'
+    + '</div>';
+
+  document.getElementById('generateBtn').addEventListener('click', generate);
 }
 
-function showStep(index) {
-  const stepLabel   = document.getElementById("step-label");
-  const stepDisplay = document.getElementById("step-display");
-  const nextBtn     = document.getElementById("next-btn");
-  const total       = currentSteps.length;
+function renderDoodle() {
+  var d          = currentDoodle;
+  var totalSteps = d.steps.length;
+  var isLast     = currentStep >= totalSteps;
 
-  const isLast = index === total - 1;
+  var pct = isLast ? 100 : Math.round((currentStep / totalSteps) * 100);
+  setProgress(pct);
 
-  stepLabel.textContent   = isLast ? "Final Step" : `Step ${index + 1} of ${total - 1}`;
-  stepDisplay.textContent = currentSteps[index];
+  var historyHTML = '';
+  if (shownSteps.length > 0) {
+    historyHTML += '<div class="steps-history">';
+    shownSteps.forEach(function(s, i) {
+      historyHTML += '<div class="step-past">&#x2713; Step ' + (i + 1) + ': ' + s + '</div>';
+    });
+    historyHTML += '</div>';
+  }
 
+  var stepHTML = '';
+  if (!isLast) {
+    stepHTML = ''
+      + '<div class="step-number">Step ' + (currentStep + 1) + ' of ' + totalSteps + '</div>'
+      + '<div class="step-text reveal">' + d.steps[currentStep] + '</div>';
+  }
+
+  var btnsHTML = '';
   if (isLast) {
-    nextBtn.classList.add("hidden");
-    document.getElementById("name-section").classList.remove("hidden");
-    document.getElementById("reset-btn").classList.remove("hidden");
+    btnsHTML = ''
+      + '<div class="done-message">&#x1F389; You did it!</div>'
+      + '<div class="btn-row">'
+      +   '<button class="btn btn-pic" id="picBtn">Show someone! &#x1F4F8;</button>'
+      +   '<button class="btn btn-small" id="newBtn">&#x2726; New Doodle</button>'
+      + '</div>';
+  } else {
+    btnsHTML = ''
+      + '<div class="btn-row-inline">'
+      +   '<button class="btn btn-next" id="nextBtn">Next Step &#x2192;</button>'
+      +   '<button class="btn btn-small" id="newBtn">New</button>'
+      + '</div>';
+  }
+
+  noteContent.innerHTML = ''
+    + '<div class="note-label">doodle idea &#x2726;</div>'
+    + '<div class="note-title">' + d.title + '</div>'
+    + '<div class="note-desc">' + d.desc + '</div>'
+    + '<div class="note-divider"></div>'
+    + historyHTML
+    + stepHTML
+    + '<div class="note-divider"></div>'
+    + btnsHTML;
+
+  if (!isLast) {
+    document.getElementById('nextBtn').addEventListener('click', nextStep);
+  } else {
+    document.getElementById('picBtn').addEventListener('click', function() {
+      alert('Snap a photo and show someone — they\'ll love it!');
+    });
+  }
+  document.getElementById('newBtn').addEventListener('click', generate);
+}
+
+
+// — Actions —
+
+function nextStep() {
+  if (currentStep < currentDoodle.steps.length) {
+    shownSteps.push(currentDoodle.steps[currentStep]);
+    currentStep++;
+    renderDoodle();
   }
 }
 
-function showNextStep() {
-  currentStepIndex++;
-  if (currentStepIndex < currentSteps.length) {
-    showStep(currentStepIndex);
-  }
+function generate() {
+  // Vary the crumple direction slightly each time
+  var midRot = (2 + Math.random() * 4) * (Math.random() < 0.5 ? 1 : -1);
+  var endRot = (5 + Math.random() * 5) * (Math.random() < 0.5 ? 1 : -1);
+  note.style.setProperty('--crumple-mid', midRot + 'deg');
+  note.style.setProperty('--crumple-end', endRot + 'deg');
+
+  var popStart = (-2 - Math.random() * 3) + 'deg';
+  note.style.setProperty('--popin-start', popStart);
+
+  note.classList.remove('pop-in');
+  note.classList.add('crumple-out');
+
+  setTimeout(function() {
+    // Pick a different doodle from the current one
+    var pool = doodles.filter(function(d) { return d !== currentDoodle; });
+    currentDoodle = pool[Math.floor(Math.random() * pool.length)];
+    currentStep   = 0;
+    shownSteps    = [];
+
+    note.classList.remove('crumple-out');
+    note.style.opacity   = '0';
+    note.style.transform = 'rotate(' + popStart + ') scale(0.82)';
+
+    renderDoodle();
+
+    void note.offsetWidth; // force reflow
+
+    note.style.opacity   = '';
+    note.style.transform = '';
+    note.classList.add('pop-in');
+
+    note.addEventListener('animationend', function() {
+      note.classList.remove('pop-in');
+    }, { once: true });
+
+  }, 380);
 }
 
-function saveName() {
-  const input  = document.getElementById("doodle-name");
-  const result = document.getElementById("name-result");
-  const name   = input.value.trim();
 
-  if (!name) {
-    result.textContent = "Give it a name first!";
-    result.classList.remove("hidden");
-    return;
-  }
-
-  result.textContent = `"${name}" — a masterpiece! 🎉`;
-  result.classList.remove("hidden");
-}
-
-function resetDoodle() {
-  currentAnimal  = "";
-  currentObject  = "";
-  currentPattern = "";
-  currentSteps   = [];
-  currentStepIndex = 0;
-
-  document.getElementById("idea-display").textContent =
-    "Press the button below to get your doodle idea!";
-
-  document.getElementById("steps-section").classList.add("hidden");
-  document.getElementById("name-section").classList.add("hidden");
-  document.getElementById("reset-btn").classList.add("hidden");
-  document.getElementById("name-result").classList.add("hidden");
-  document.getElementById("doodle-name").value = "";
-}
+// — Init —
+renderIntro();
